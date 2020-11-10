@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Client</title>
+</head>
+<body>
+
+<h1>Black Jack</h1>
+<h3>21点小游戏</h3>
+
+<label>
+    EnterPlayerName: <input id='player'>
+</label>
+
+<button onclick="licensing()">
+    发牌
+</button>
+
+<button onclick="showCard()">
+    开牌
+</button>
+
+<button onclick="viewResult()">
+    查看结果
+</button>
+
+
+<script>
+
+    let ws = new WebSocket('ws://localhost:3200')
+    let points = 0
+
+    // 指定连接后执行事件
+    ws.onopen = ()=>{
+        console.log('open connection')
+    }
+
+    // 接收服务端发送的消息
+    ws.onmessage = event =>{
+        console.log(event.data)
+        points += Number(event.data)
+    }
+
+    // 关闭后执行事件
+    ws.onclose = () =>{
+        console.log('close connection')
+    }
+
+    function licensing(){
+        ws.send('licensing')
+    }
+
+    function showCard() {
+        let playerName = document.getElementById('player').value
+        ws.send(`showCard-${points}-${playerName}`)
+    }
+
+    function viewResult() {
+        ws.send('viewResult')
+    }
+
+
+</script>
+
+</body>
+</html>

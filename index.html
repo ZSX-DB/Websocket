@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+</head>
+<body>
+
+<h2>
+    Websocket是一个持久化的网络通信协议，可以在单个 TCP 连接上进行全双工通讯，没有了Request和Response的概念，两者地位完全平等，连接一旦建立，客户端和服务端之间实时可以进行双向数据传输
+</h2>
+
+<hr>
+
+<h3>WebSocket心跳</h3>
+
+<p>
+    可能会有一些未知情况导致SOCKET断开，而客户端和服务端却不知道，需要客户端定时发送一个心跳 Ping 让服务端知道自己在线，而服务端也要回复一个心跳 Pong告诉客户端自己可用，否则视为断开
+</p>
+
+<hr>
+
+<p>0: 表示正在连接</p>
+<p>1: 表示连接成功，可以通信了</p>
+<p>2: 表示连接正在关闭</p>
+<p>3: 表示连接已经关闭，或者打开连接失败</p>
+
+<button onclick="openConn()">打开连接</button>
+
+<button onclick="showReadyState()">查看连接状态</button>
+
+<button onclick="lineUpSend()">排队发送</button>
+
+<button onclick="closeConn()">关闭连接</button>
+
+<button onclick="attack()">攻击</button>
+
+
+<script src="./index.js"></script>
+
+</body>
+</html>

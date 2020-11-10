@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>heartbeat</title>
+</head>
+<body>
+
+<h1>WebSocket心跳</h1>
+
+<p>可能会有一些未知情况导致SOCKET断开，而客户端和服务端却不知道，需要客户端定时发送一个心跳 Ping 让服务端知道自己在线。</p>
+<p>而服务端也要回复一个心跳 Pong告诉客户端自己可用，否则视为断开</p>
+<p>实现心跳检测的方法思路: 通过定时向服务器send()相关消息，并且定下心跳包的超时时间，当收到服务器返回的消息时，清掉当前心跳计时器以及重连超时的定时器。</p>
+<p>若服务端未能够及时返回特定消息，超过设定的超时时间时，主动关闭当前websocket连接，并且尝试重新建立新的websocket连接</p>
+
+<script>
+
+    let ws
+    let count = 0
+    let isMes = false
+
+    const setEvents = () => {
+        ws = new WebSocket('ws://localhost:3200')
+        ws.onopen = ()=>{
+            console.log('open connection')
+        }
+        ws.onmessage = event =>{
+            isMes = true
+            console.log(event)
+        }
+        ws.onclose = () =>{
+            console.log('close connection')
+        }
+    }
+
+    setEvents()
+
+    // 7s检测一次
+    setInterval(()=>{
+        console.log('心跳检测')
+        ws.send('Client On Line')
+        let interval = setInterval(()=>{
+            count++
+            if(isMes){
+                console.log('正常连接')
+                count = 0
+                isMes = false
+                clearInterval(interval)
+            }
+            // 超过3s并且没有收到回复，关闭再重连
+            if(count>3 && !isMes){
+                console.log('超出重连')
+                ws.close()
+                count = 0
+                setEvents()
+                clearInterval(interval)
+            }
+        },1000)
+    },7000)
+
+</script>
+
+</body>
+</html>
